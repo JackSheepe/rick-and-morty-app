@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import FilterPanel from "./components/FilterPanel";
+import { api } from "./api/Api";
+import CharacterList from "./components/CharacterList";
 
-function App() {
+const App = () => {
+  const [characters, setCharacters] = useState([]);
+  const [filteredCharacters, setFilteredCharacters] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    api
+      .getCharacters()
+      .then((data) => {
+        setCharacters(data.results);
+        setFilteredCharacters(characters);
+      })
+      .catch(console.error);
+  }, []);
+
+  const resetPage = () => {
+    setCurrentPage(1);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <FilterPanel
+        characters={characters}
+        setFilteredCharacters={setFilteredCharacters}
+        resetPage={resetPage}
+      />
+      <CharacterList
+        currentPage={currentPage}
+        characters={filteredCharacters}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
-}
+};
 
 export default App;
